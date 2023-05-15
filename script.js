@@ -1,3 +1,6 @@
+let player = 0;
+let computer = 0;
+
 const getComputerChoice = () => {
     let choice = Math.floor(Math.random() * 3) + 1;
     if (choice === 1){
@@ -10,9 +13,8 @@ const getComputerChoice = () => {
     return choice;
 };
 
-const playRound = (computerSelection) => {
+const playRound = (playerSelection,computerSelection) => {
     
-    let playerSelection = prompt();
     let finalMessage = 0;
 
     if (playerSelection.toLowerCase() === "piedra"){
@@ -54,28 +56,33 @@ const playRound = (computerSelection) => {
         }
     }
 
-    return finalMessage;
+    const message = document.querySelector('.finalMessage');
+
+    if (finalMessage.includes("You lose!") && player < 5 && computer < 5){
+        computer++;
+        const scoreUpdate = document.querySelector('#computer');
+        scoreUpdate.textContent = `Computer: ${computer}`;
+    } else if (finalMessage.includes("You win!") && player < 5 && computer < 5){
+        player++;
+        const scoreUpdate = document.querySelector('#player');
+        scoreUpdate.textContent = `Player: ${player}`;
+    }
+
+    if(player === 5) {
+        message.textContent = `You won the game! The final score was, Player: ${player}, Computer: ${computer}`;
+        return; 
+    } else if(computer === 5) {
+        message.textContent = `You lost the game! The final score was, Player: ${player}, Computer: ${computer}`;
+        return; 
+    }
+
+    message.textContent = finalMessage;
+
 }
 
-const game = () => {
-    let player = 0;
-    let computer = 0;
-    
-    while (player < 3 && computer < 3){
-        message = playRound(getComputerChoice());
-        if (message.includes("You lose!")){
-            computer++;
-        } else if (message.includes("You win!")){
-            player++;
-        }
-    }
-
-    if (player === 3){
-        return `Congratulations! You won! The score was, Player: ${player}, Computer: ${computer}`;
-    }
-    else {
-        return `Sorry! The computer won. The score was, Player: ${player}, Computer: ${computer}`;
-    }
-}
-
-console.log(game());
+const buttons = document.querySelectorAll('.btn');
+buttons.forEach( button => {
+    button.addEventListener('click', (e) => {
+        playRound(e.currentTarget.getAttribute("data-key"), getComputerChoice());
+    });
+});
